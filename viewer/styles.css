@@ -1,0 +1,80 @@
+body {
+    background-color: gray;
+}
+
+.page {
+    border: 1px solid black;
+    margin: 1em auto;
+    padding: 1em;
+    background-color: white;
+}
+
+
+.img_cont
+{
+    width: 600px;
+}
+
+img
+{
+    width: 100%;
+}
+
+.text
+{
+    padding-left: 1em;
+    width:30em;
+}
+
+.text p, .lnum p
+{
+    white-space:pre;
+    line-height:1.6;
+}
+
+.lnum
+{
+    padding-left:2em;
+    color:gray;
+}
+
+span.highlight, tr.formatting td
+{
+    background-color: yellow;
+    border: 1px solid orange;
+}
+
+a.img_link
+{
+    display: none;
+}
+
+body.loaded a.img_link
+{
+    display:block;
+}
+
+body.loaded span.ph
+{
+    display:none;
+}
+
+tr.notes td
+{
+    border: 1px black dotted;
+    background-color: #E0E0E0;
+    padding: 0 1em;
+    max-width:25em;
+}
+
+tr.notes h2
+{
+    font-size: 1.1em;
+}
+
+td.img_ph
+{
+    vertical-align:top;
+}
+
+
