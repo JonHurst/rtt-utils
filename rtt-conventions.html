@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <title>RTT Conventions</title>
+    <style type="text/css">
+      body {max-width:40em; margin:auto;}
+    </style>
+    <meta http-equiv='Content-Type' content='text/html; charset=utf-8'/>
+  </head>
+  <body>
+    <h1>Overall structure</h1>
+
+    <p>A reference text transformation (RTT) of a work consists of
+    scans of all relevant pages of that work (blank pages are
+    removed), a file containing a UTF-8 text representation for each
+    of those scans and an XML file providing structure, formatting
+    information and metadata.</p>
+
+    <h1>Text file conventions</h1>
+
+    <h2>Character set</h2>
+
+    <p>The character set used is UTF-8.</p>
+
+    <h2>Line synchronisation</h2>
+
+    <p>The lines of the text are synchronised to the lines of the
+    scan, i.e. characters appearing on the same line in a scan appear
+    on the same line in the associated text file, and the lines
+    themselves appear in the same order. The exception is where a soft
+    hyphen in the scan splits a word over two lines: in this case the
+    soft hyphen is removed and the rejoined word placed at the start
+    of the lower line.</p>
+
+    <p>DP source material has hyphens and dashes “clothed” on the
+    upper line. These are corrected if they result in a mismatch in
+    line count. They may also be corrected for other reasons, e.g. to
+    prevent excessively long lines, but otherwise they are accepted
+    since the benefit in correcting them is not sufficient to justify
+    the cost.</p>
+
+    <p>Where there is an obvious error in a scan, that error is
+    corrected in the text, and the correction is noted in the XML
+    file. Depending on the source material it may not be possible to
+    ensure that a note exists for every correction made, but a
+    correction without a note is still considered an error, and if an
+    errata report is received that notes a difference between scan and
+    text that has occurred due to an unnotified correction, a note
+    will be added.</p>
+
+    <h2>Separation of blocks</h2>
+
+    <p>Where two successive lines should not be wrapped together they
+    are separated with a single blank line. Where this occurs over a page
+    boundary, the blank line is inserted at the top of the second
+    page.</p>
+
+    <h2>Special characters</h2>
+
+    <p>Nearly all special characters are catered for by the UTF-8
+    encoding. Of special note:</p>
+
+    <ul>
+      <li>The UTF-8 character for ellipse (U2026) is used rather than
+      successive periods.</li>
+      <li>All hyphens are hard hyphens.</li>
+      <li>Number ranges use unspaced en dash (U2013).</li>
+      <li>Where a spaced en dash and an unspaced em dash (U2014) are
+      typographically equivalent, the spaced en dash is used.</li>
+      <li>A 3em dash is represented with three successive em
+      dashes.</li>
+      <li>Quotes are directional: left single quote (U2018) and right
+      single quote (U2019) for single quotes, left doule quote (U201C)
+      and right double quote (U201D) for double quotes. A single right
+      quote is used for apostrophe as suggested in the unicode
+      spec. Double prime (U2033) is used for double prime, ditto,
+      seconds and inches. Single prime is (U2032) is used for single
+      prime, minutes and feet. Straight quotes are never used.</li>
+    </ul>
+
+    <h2>Material in scan not included in text</h2>
+
+    <p>Page furniture such as running headers/footers, page numbers,
+    catchwords etc. are not included. The XML has the Facility to
+    capture original page numbers if desired.</p>
+
+    <h2>Microformatting</h2>
+
+    <p>Microformatting is text in the scan that is represented in a
+    different way to the rest of the text in its block. Common
+    examples are words highlighted in italics, bolding, underlining or
+    small caps in blocks of normal text. The XML file defines strings
+    to represent the opening and closing of a region of
+    microformatting. To avoid ambiguity, these strings must be chosen
+    such that they do not appear elsewhere in the text. The usual
+    choices are {{ and }}.</p>
+
+    <h1>XML file conventions</h1>
+
+    <h2>Schema</h2>
+
+    <p>There is a <a href="#">RelaxNG schema</a> available for the XML
+    file.</p>
+
+    <h2>Text</h2>
+
+    <p>The text element includes the text using an XInclude
+    directive. This allows easy XSL processing while at the same time
+    meaning that work can be carried out on the text with tools such
+    as sed and grep without reference to the XML file.</p>
+
+    <h2>Tags</h2>
+
+    <p>Each page can have any number of tag sets, each with its own
+    class name. Each tag set consists of any number of tags. There is
+    no mandate on how these tags should be used.</p>
+
+    <p>The convention I have use, however, is:</p>
+
+    <ol>
+      <li>If there is microformatting on the page, a tag set with
+      "inline_formatting" class is added. The tags uses are "italics",
+      "bold", "small_caps", "gesperrt", "superscript", "subscript" and
+      "misc_inline". This allows automatic processing of
+      microformatting on any page that only has one type.</li>
+
+      <li>If there are any macroformatting items that will a tag set
+      with a class of "block_formatting" is added. A "heading" tag is
+      added if there is a heading on the page. Other tags are added as
+      appropriate. For text derived from DP F2 these are
+      "wrap_block", "nowrap_block", "illustration", "footnote",
+      "sidenote" and "thought_break".</li>
+    </ol>
+
+    <h2>Image lines</h2>
+
+    <p>The image element can optionally include a lines element. This
+    is a comma separated list of the positions of the lines in the
+    image in ten-thousandths of image height.</p>
+
+    <h2>Notes</h2>
+
+    <p>Both the book element and each page element can contain a notes
+    element. Each notes element contains one or more note
+    elements. One use for these is noting where an error in the scan has
+    been corrected in the text.</p>
+
+  </body>
+</html>
