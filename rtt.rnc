@@ -1,0 +1,39 @@
+namespace xi = "http://www.w3.org/2001/XInclude"
+
+start =
+  element book {
+    element title { text },
+    element subtitle { text }?,
+    element author { text },
+    element blurb { text },
+    notes*,
+    element pages {
+      attribute microformatting-open { text },
+      attribute microformatting-close { text },
+      page+
+    }
+  }
+notes =
+  element notes {
+    element note { text }+
+  }
+page =
+  element page {
+    attribute id { text },
+    attribute opn { text }?,
+    element image {
+      attribute src { text },
+      element lines { text }?
+    },
+    element text {
+      element xi:include {
+        attribute href { text },
+        attribute parse { text }
+      }
+    },
+    (notes*
+     & element tags {
+         attribute class { text },
+         element tag { text }+
+       }*)
+  }

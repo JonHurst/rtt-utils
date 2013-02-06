@@ -1,0 +1,68 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<grammar xmlns="http://relaxng.org/ns/structure/1.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <start>
+    <element name="book" >
+      <element name="title"><text/></element>
+      <optional>
+        <element name="subtitle"><text/></element>
+      </optional>
+      <element name="author"><text/></element>
+      <element name="blurb"><text/></element>
+      <zeroOrMore>
+        <ref name="notes"/>
+      </zeroOrMore>
+      <element name="pages">
+	<attribute name="microformatting-open"><text/></attribute>
+	<attribute name="microformatting-close"><text/></attribute>
+	<oneOrMore>
+	  <ref name="page"/>
+	</oneOrMore>
+      </element>
+    </element>
+  </start>
+
+
+<define name="notes">
+    <element name="notes">
+      <oneOrMore>
+	<element name="note"><text/></element>
+      </oneOrMore>
+    </element>
+</define>
+
+
+<define name="page">
+  <element name="page">
+    <attribute name="id"><text/></attribute>
+    <optional>
+      <attribute name="opn"><text/></attribute>
+    </optional>
+    <element name="image">
+      <attribute name="src"><text/></attribute>
+      <optional>
+        <element name="lines"><text/></element>
+      </optional>
+    </element>
+    <element name="text">
+      <element name="xi:include">
+        <attribute name="href"><text/></attribute>
+        <attribute name="parse"><text/></attribute>
+      </element>
+    </element>
+    <interleave>
+      <zeroOrMore>
+        <ref name="notes"/>
+      </zeroOrMore>
+      <zeroOrMore>
+        <element name="tags">
+          <attribute name="class"><text/></attribute>
+          <oneOrMore>
+            <element name="tag"><text/></element>
+          </oneOrMore>
+        </element>
+      </zeroOrMore>
+    </interleave>
+  </element>
+</define>
+
+</grammar>
