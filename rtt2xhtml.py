@@ -91,6 +91,10 @@ def main():
     close_mf = pages.attrib["microformatting-close"]
     contents = []
     pages_text = []
+    first_text = pages.find("page").find("text")
+    if first_text.text[0] != "\n":
+        sys.stderr.write("Adding newline to start of file\n")
+        first_text.text = "\n" + first_text.text
     for p in pages.findall("page"):
         pages_text.append(process_page(p, open_mf, close_mf, contents))
     contents_html = contents_template % "\n".join(contents)
