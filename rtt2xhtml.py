@@ -99,6 +99,7 @@ def main():
         pages_text.append(process_page(p, open_mf, close_mf, contents))
     contents_html = contents_template % "\n".join(contents)
     pages_html = "\n".join(pages_text) + "\n</p></div>"
+    pages_html = pages_html.replace("-\n", "-<!--\n-->")
     mo = re.search(r"<[^/]", pages_html)
     sys.stdout.write(file_template % (contents_html + pages_html[mo.start():]))
 
