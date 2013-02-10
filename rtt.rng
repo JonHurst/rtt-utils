@@ -57,7 +57,11 @@
         <element name="tags">
           <attribute name="class"><text/></attribute>
           <oneOrMore>
-            <element name="tag"><text/></element>
+            <element name="tag"><text/>
+            <optional>
+              <attribute name="lines"><text/></attribute>
+            </optional>
+            </element>
           </oneOrMore>
         </element>
       </zeroOrMore>

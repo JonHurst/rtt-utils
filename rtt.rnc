@@ -34,6 +34,9 @@ page =
     (notes*
      & element tags {
          attribute class { text },
-         element tag { text }+
+         element tag {
+           text,
+           attribute lines { text }?
+         }+
        }*)
   }
