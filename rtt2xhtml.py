@@ -10,6 +10,7 @@ import html
 import re
 
 chapter_counter = 0
+heading_regexp = "CHAPTER|INTRODUCTION|LETTER"
 
 
 file_template = """\
@@ -44,12 +45,41 @@ def tags(p, t):
     return retval
 
 
-def process_page(p, open_mf, close_mf, contents):
+def process_heading(out_lines, contents, heading_regexp):
     global chapter_counter
+    #find the line containing the heading
+    if heading_regexp == "":
+        hdg = re.compile(r"\w+")
+    else:
+        hdg = re.compile(heading_regexp)
+    prev_blank, next_blank, hdg_line = -1, -1, -1
+    for c, l in enumerate(out_lines):
+        if hdg_line == -1:
+            if l == "</p><p>":
+                prev_blank = c
+            elif hdg.search(l):
+                hdg_line = c
+        else:
+            if l == "</p><p>":
+                next_blank = c
+                break
+    if hdg_line == -1: return
+    out_lines[next_blank] = out_lines[next_blank].replace("</p>", "</h1>")
+    if chapter_counter == 0:
+        open_str = "<div class='chapter' id='ch%d'><h1>" % chapter_counter
+    else:
+        open_str = "</div><div class='chapter' id='ch%d'><h1>" % chapter_counter
+    if prev_blank == -1:
+        out_lines.insert(0, open_str)
+    else:
+        out_lines[prev_blank] = out_lines[prev_blank].replace("<p>", open_str)
+    contents.append("<li><a href='#ch%d'>%s</a></li>" % (chapter_counter, out_lines[hdg_line]))
+    chapter_counter += 1
+
+
+def process_page(p, open_mf, close_mf, contents, heading_regexp=""):
     out_lines = []
-    hdg = False
-    if "heading" in tags(p, "block_formatting"):
-        hdg = "o"
+    #process easy inline formatting
     ot, ct = open_mf, close_mf
     inline_tags = tags(p, "inline_formatting")
     if len(inline_tags) == 1:
@@ -60,22 +90,16 @@ def process_page(p, open_mf, close_mf, contents):
     for l in p.find("text").text.splitlines():
         l = l.strip()
         if l == "":
-            if hdg == "o":
-                out_lines.append("</p></div><div class='chapter' id='ch%d'><h1>" % chapter_counter)
-                hdg = "c"
-            elif hdg == "c":
-                out_lines.append("</h1><p>")
-                chapter_counter += 1
-                hdg = False
-            else:
-                out_lines.append("</p><p>")
+            out_lines.append("</p><p>")
         else:
             l = html.escape(l, False)
             l = l.replace(open_mf, ot).replace(close_mf, ct)
-            if hdg == "c":
-                contents.append("<li><a href='#ch%d'>%s</a></li>" % (chapter_counter, l))
+            # if hdg == "c":
+            #     contents.append("<li><a href='#ch%d'>%s</a></li>" % (chapter_counter, l))
             out_lines.append(l)
     out_lines.append("<!--%s-->" % p.attrib["id"])
+    if "heading" in tags(p, "block_formatting"):
+        process_heading(out_lines, contents, heading_regexp)
     return "\n".join(out_lines)
 
 
@@ -91,12 +115,11 @@ def main():
     close_mf = pages.attrib["microformatting-close"]
     contents = []
     pages_text = []
-    first_text = pages.find("page").find("text")
-    if first_text.text[0] != "\n":
-        sys.stderr.write("Adding newline to start of file\n")
-        first_text.text = "\n" + first_text.text
+    first_page_text = pages.find("page/text")
+    if first_page_text.text[0] != "\n":
+        first_page_text.text = "\n" + first_page_text.text
     for p in pages.findall("page"):
-        pages_text.append(process_page(p, open_mf, close_mf, contents))
+        pages_text.append(process_page(p, open_mf, close_mf, contents, heading_regexp))
     contents_html = contents_template % "\n".join(contents)
     pages_html = "\n".join(pages_text) + "\n</p></div>"
     pages_html = pages_html.replace("-\n", "-<!--\n-->")
