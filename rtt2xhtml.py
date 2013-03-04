@@ -10,7 +10,7 @@ import html
 import re
 
 chapter_counter = 0
-heading_regexp = "CHAPTER|INTRODUCTION|LETTER"
+heading_regexp = "CHAPTER|INTRODUCTION|LETTER|PREFACE"
 
 
 file_template = """\
