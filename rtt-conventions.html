@@ -51,10 +51,12 @@
 
     <h2>Separation of blocks</h2>
 
-    <p>Where two successive lines should not be wrapped together they
-    are separated with a single blank line. Where this occurs over a page
-    boundary, the blank line is inserted at the top of the second
-    page.</p>
+    <p>Where two successive lines should not be wrapped together they are
+    separated with a single blank line. Where this occurs over a page boundary,
+    the blank line is inserted at the top of the second page. Lines of poetry
+    forming a verse are considered to be wrapped together, albeit using a highly
+    specialised form of wrapping. Therefore poetry verses are separated by a
+    blank line but individual lines are not.</p>
 
     <h2>Special characters</h2>
 
@@ -81,26 +83,25 @@
 
     <h2>Material in scan not included in text</h2>
 
-    <p>Page furniture such as running headers/footers, page numbers,
-    catchwords etc. are not included. The XML has the Facility to
-    capture original page numbers if desired.</p>
+    <p>Page furniture such as running headers/footers, page numbers, catchwords
+    etc. are not included. The XML schema allows original page numbers to be
+    captured if desired.</p>
 
     <h2>Microformatting</h2>
 
-    <p>Microformatting is text in the scan that is represented in a
-    different way to the rest of the text in its block. Common
-    examples are words highlighted in italics, bolding, underlining or
-    small caps in blocks of normal text. The XML file defines strings
-    to represent the opening and closing of a region of
-    microformatting. To avoid ambiguity, these strings must be chosen
-    such that they do not appear elsewhere in the text. The usual
-    choices are {{ and }}.</p>
+    <p>Microformatting is text in the scan that is represented in a different
+    way to the rest of the text in its block. Common examples are words
+    highlighted in italics, bolding, underlining or small caps in blocks of
+    normal text. The XML file defines strings to represent the opening and
+    closing of a region of microformatting. These strings are chosen such that
+    they are unambiguous for the particular text, meaning that no escaping of
+    special characters is required. The usual choices are {{ and }}.</p>
 
     <h1>XML file conventions</h1>
 
     <h2>Schema</h2>
 
-    <p>There is a <a href="#">RelaxNG schema</a> available for the XML
+    <p>There is a <a href="rtt.rng">RelaxNG schema</a> available for the XML
     file.</p>
 
     <h2>Text</h2>
@@ -116,21 +117,20 @@
     class name. Each tag set consists of any number of tags. There is
     no mandate on how these tags should be used.</p>
 
-    <p>The convention I have use, however, is:</p>
+    <p>The convention I use, however, are:</p>
 
     <ol>
       <li>If there is microformatting on the page, a tag set with
       "inline_formatting" class is added. The tags uses are "italics",
       "bold", "small_caps", "gesperrt", "superscript", "subscript" and
       "misc_inline". This allows automatic processing of
-      microformatting on any page that only has one type.</li>
+      microformatting on any page that has only one type.</li>
 
-      <li>If there are any macroformatting items that will a tag set
-      with a class of "block_formatting" is added. A "heading" tag is
-      added if there is a heading on the page. Other tags are added as
-      appropriate. For text derived from DP F2 these are
-      "wrap_block", "nowrap_block", "illustration", "footnote",
-      "sidenote" and "thought_break".</li>
+      <li>If there are any macroformatting items, a tag set with a class of
+      "block_formatting" is added. A "heading" tag is added if there is a
+      heading on the page. Other tags are added as appropriate. For text derived
+      from DP F2 these are "wrap_block", "nowrap_block", "illustration",
+      "footnote", "sidenote" and "thought_break".</li>
     </ol>
 
     <h2>Image lines</h2>
