@@ -28,7 +28,8 @@ page =
     element text {
       element xi:include {
         attribute href { text },
-        attribute parse { text }
+        attribute parse { text },
+        attribute encoding { text }
       }
     },
     (notes*

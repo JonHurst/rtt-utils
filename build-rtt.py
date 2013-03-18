@@ -25,7 +25,8 @@ def make_page(ident, text_file, image_file):
     text = et.Element("text")
     inc = et.Element("{http://www.w3.org/2001/XInclude}include",
                      {"href": text_file,
-                      "parse": "text"})
+                      "parse": "text",
+                      "encoding": "utf-8"})
     text.append(inc)
     page.append(text)
     return page

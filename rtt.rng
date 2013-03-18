@@ -47,6 +47,7 @@
       <element name="xi:include">
         <attribute name="href"><text/></attribute>
         <attribute name="parse"><text/></attribute>
+        <attribute name="encoding"><text/></attribute>
       </element>
     </element>
     <interleave>
