@@ -11,12 +11,8 @@ rtt_template = """\
   <title> </title>
   <subtitle> </subtitle>
   <author> </author>
-  <edition> </edition>
+  <blurb> </blurb>
   <pages microformatting-close="}}" microformatting-open="{{">
-    <!-- <page id="003"> -->
-    <!--   <image src="http://www.gutenberg.org/files/41445/41445-page-images/p0003.png"><lines>222,1828,2168,2451,2755,3056,3391,3691,3996,4296,4566,4902,5176,5528,5833,6147,6438,6743,7048,7353,7653,7966,8262,8572,8876,9185,9455,9791</lines></image> -->
-    <!--   <text><xi:include href="text/003" parse="text" /></text> -->
-    <!-- </page> -->
   </pages>
 </book>
 """
