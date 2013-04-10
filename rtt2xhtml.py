@@ -8,9 +8,9 @@ import xml.etree.ElementTree as et
 import xml.etree.ElementInclude as ei
 import html
 import re
+import argparse
 
 chapter_counter = 0
-heading_regexp = "CHAPTER|INTRODUCTION|LETTER|PREFACE"
 
 
 file_template = """\
@@ -45,7 +45,7 @@ def tags(p, t):
     return retval
 
 
-def process_heading(out_lines, contents, heading_regexp):
+def process_heading(out_lines, contents, heading_regexp, heading_blocks):
     global chapter_counter
     #find the line containing the heading
     if heading_regexp == "":
@@ -54,17 +54,24 @@ def process_heading(out_lines, contents, heading_regexp):
         hdg = re.compile(heading_regexp)
     prev_blank, next_blank, hdg_line = -1, -1, -1
     for c, l in enumerate(out_lines):
-        if hdg_line == -1:
-            if l == "</p><p>":
-                prev_blank = c
-            elif hdg.search(l):
-                hdg_line = c
-        else:
-            if l == "</p><p>":
-                next_blank = c
-                break
+        if l == "</p><p>":
+            prev_blank = c
+        elif hdg.search(l):
+            hdg_line = c
+            break
     if hdg_line == -1: return
-    out_lines[next_blank] = out_lines[next_blank].replace("</p>", "</h1>")
+    contents_str = out_lines[hdg_line]
+    if heading_blocks > 1: multi_block_heading = True
+    while heading_blocks:
+        c += 1
+        if out_lines[c] != "</p><p>":
+            contents_str += " " + out_lines[c]
+            continue
+        if heading_blocks > 1:
+            out_lines[c] = "</h1><h1 class='sub'>"
+        else:
+            out_lines[c] = out_lines[c].replace("</p>", "</h1>")
+        heading_blocks -= 1
     if chapter_counter == 0:
         open_str = "<div class='chapter' id='ch%d'><h1>" % chapter_counter
     else:
@@ -73,11 +80,11 @@ def process_heading(out_lines, contents, heading_regexp):
         out_lines.insert(0, open_str)
     else:
         out_lines[prev_blank] = out_lines[prev_blank].replace("<p>", open_str)
-    contents.append("<li><a href='#ch%d'>%s</a></li>" % (chapter_counter, out_lines[hdg_line]))
+    contents.append("<li><a href='#ch%d'>%s</a></li>" % (chapter_counter, contents_str))
     chapter_counter += 1
 
 
-def process_page(p, open_mf, close_mf, contents, heading_regexp=""):
+def process_page(p, open_mf, close_mf, contents, heading_regexp="", heading_blocks=1):
     out_lines = []
     #process easy inline formatting
     ot, ct = open_mf, close_mf
@@ -94,22 +101,28 @@ def process_page(p, open_mf, close_mf, contents, heading_regexp=""):
         else:
             l = html.escape(l, False)
             l = l.replace(open_mf, ot).replace(close_mf, ct)
-            # if hdg == "c":
-            #     contents.append("<li><a href='#ch%d'>%s</a></li>" % (chapter_counter, l))
             out_lines.append(l)
     out_lines.append("<!--%s-->" % p.attrib["id"])
     if "heading" in tags(p, "block_formatting"):
-        process_heading(out_lines, contents, heading_regexp)
+        process_heading(out_lines, contents, heading_regexp, heading_blocks)
     return "\n".join(out_lines)
 
 
 def main():
-    if len(sys.argv) != 2 or not os.path.isfile(sys.argv[1]):
-        print("Usage: ", sys.argv[0], "rtt_file")
+    parser = argparse.ArgumentParser(description='Create xhtml from rtt.')
+    parser.add_argument("rtt_file", help="RTT file.")
+    parser.add_argument("-r", "--heading_regexp", help="Regexp to identify a chapter heading")
+    parser.add_argument("-b", "--heading_blocks", type=int, choices=[1, 2],
+                        default=1, help="The number of blocks in a chapter heading.")
+    args = parser.parse_args()
+    rtt_file = os.path.abspath(args.rtt_file)
+    if not os.path.isfile(rtt_file):
+        print(rtt_file, "is not a file\n", file="stderr")
+        parser.print_help()
         sys.exit(-1)
-    rtt = et.parse(sys.argv[1])
+    rtt = et.parse(rtt_file)
     pages = rtt.find("pages")
-    os.chdir(os.path.dirname(sys.argv[1]))
+    os.chdir(os.path.dirname(rtt_file))
     ei.include(pages)
     open_mf = pages.attrib["microformatting-open"]
     close_mf = pages.attrib["microformatting-close"]
@@ -119,7 +132,8 @@ def main():
     if first_page_text.text[0] != "\n":
         first_page_text.text = "\n" + first_page_text.text
     for p in pages.findall("page"):
-        pages_text.append(process_page(p, open_mf, close_mf, contents, heading_regexp))
+        pages_text.append(process_page(p, open_mf, close_mf,
+                                       contents, args.heading_regexp, args.heading_blocks))
     contents_html = contents_template % "\n".join(contents)
     pages_html = "\n".join(pages_text) + "\n</p></div>"
     pages_html = pages_html.replace("-\n", "-<!--\n-->")
