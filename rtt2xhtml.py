@@ -135,7 +135,7 @@ def main():
     args = parser.parse_args()
     rtt_file = os.path.abspath(args.rtt_file)
     if not os.path.isfile(rtt_file):
-        print(rtt_file, "is not a file\n", file="stderr")
+        print(rtt_file, "is not a file\n", file=sys.stderr)
         parser.print_help()
         sys.exit(-1)
     rtt = et.parse(rtt_file)
