@@ -62,15 +62,23 @@ def process_heading(out_lines, contents, heading_regexp, heading_blocks):
     if hdg_line == -1: return
     contents_str = out_lines[hdg_line]
     if heading_blocks > 1: multi_block_heading = True
+    sub = False
     while heading_blocks:
         c += 1
         if out_lines[c] != "</p><p>":
             contents_str += " " + out_lines[c]
             continue
         if heading_blocks > 1:
-            out_lines[c] = "</h2><h2 class='sub'>"
+            if sub:
+                out_lines[c] = "<br/>"
+            else:
+                out_lines[c] = '<br/><span class="sub">'
+                sub = True
         else:
-            out_lines[c] = out_lines[c].replace("</p>", "</h2>")
+            if sub:
+                out_lines[c] = out_lines[c].replace("</p>", "</span></h2>")
+            else:
+                out_lines[c] = out_lines[c].replace("</p>", "</h2>")
         heading_blocks -= 1
     if chapter_counter == 0:
         open_str = "<div class='chapter' id='ch%d'><h2>" % chapter_counter
