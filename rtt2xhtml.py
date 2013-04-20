@@ -94,6 +94,11 @@ def process_heading(out_lines, contents, heading_regexp, heading_blocks):
 
 def process_page(p, open_mf, close_mf, contents, heading_regexp="", heading_blocks=1):
     out_lines = []
+    pid = p.attrib["id"]
+    noted_lines = set()
+    for n in p.findall("notes/note"):
+        if "line" in n.attrib:
+            noted_lines.add(int(n.attrib["line"]))
     #process easy inline formatting
     ot, ct = open_mf, close_mf
     inline_tags = tags(p, "inline_formatting")
@@ -102,14 +107,19 @@ def process_page(p, open_mf, close_mf, contents, heading_regexp="", heading_bloc
             ot, ct = "<i>", "</i>"
         elif "smallcaps" in inline_tags:
             ot, ct = "<span class='sc'>", "</span>"
-    for l in p.find("text").text.splitlines():
+    for c, l in enumerate(p.find("text").text.splitlines()):
         l = l.strip()
+        a = ""
+        if c + 1 in noted_lines:
+            a = "<a id='p%sl%d'/>" % (pid, c)
         if l == "":
-            out_lines.append("</p><p>")
+            out_lines.append(a + "</p><p>")
         else:
             l = html.escape(l, False)
             l = l.replace(open_mf, ot).replace(close_mf, ct)
-            out_lines.append(l)
+            l = l.replace(" ”", " ”") #prevent line breaking between – and ”
+            l = l.replace(": –", ": –") #prevent line breaking between : and –
+            out_lines.append(a + l)
     out_lines.append("<!--%s-->" % p.attrib["id"])
     if "heading" in tags(p, "block_formatting"):
         process_heading(out_lines, contents, heading_regexp, heading_blocks)
