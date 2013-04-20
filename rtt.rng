@@ -25,7 +25,12 @@
 <define name="notes">
     <element name="notes">
       <oneOrMore>
-	<element name="note"><text/></element>
+        <element name="note">
+          <optional>
+            <attribute name="line"><text/></attribute>
+          </optional>
+          <text/>
+        </element>
       </oneOrMore>
     </element>
 </define>

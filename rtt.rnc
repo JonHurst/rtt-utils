@@ -15,7 +15,10 @@ start =
   }
 notes =
   element notes {
-    element note { text }+
+    element note {
+      attribute line { text }?,
+      text
+    }+
   }
 page =
   element page {
